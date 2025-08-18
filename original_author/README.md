@@ -1,11 +1,19 @@
 # react-native-autoheight-webview
 
 An auto height webview for React Native, even auto width for inline html.
+
+[![NPM Version](http://img.shields.io/npm/v/react-native-autoheight-webview.svg?style=flat-square)](https://www.npmjs.com/package/react-native-autoheight-webview)
+[![NPM Downloads](https://img.shields.io/npm/dt/react-native-autoheight-webview.svg?style=flat-square)](https://www.npmjs.com/package/react-native-autoheight-webview)
+
 ## versioning
 
-`npm install react-native-autoheight-webview --save`
+`npm install react-native-autoheight-webview --save` (rn >= 0.60, rnw >= 10.9.0)
 
-Read [README Of the original author](.original_author/README.md) for earlier version guide and please note that fixes and new features will only be included in the last version.
+`npm install react-native-autoheight-webview@1.0.1 --save` (0.57 <= rn < 0.59)
+
+`npm install react-native-autoheight-webview@1.5.2 --save` (0.59 <= rn < 0.60, 5.4.0 <= rnw < 10.9.0)
+
+Read [README_old](./README_old.md) for earlier version guide and please note that fixes and new features will only be included in the last version.
 
 ## showcase
 
@@ -66,13 +74,18 @@ import { Dimensions } from 'react-native'
 | __showsVerticalScrollIndicator__ |  false  |                                                `PropTypes.bool`                                                 | False by default (different from react-native-webview).                                                                                                                                                      |
 | __showsHorizontalScrollIndicator__ |  false  |                                                `PropTypes.bool`                                                 | False by default (different from react-native-webview).                                                                                                                                                      |
 | __originWhitelist__              |  ['*']  |                                      `PropTypes.arrayOf(PropTypes.string)`                                      |  Validate any origin by default cause of most cases using static HTML concerns.                                                                                                                                                                                                           |
-## supporting rnahw (Original Author)
+
+## demo
+
+```
+npx react-native run-ios/android
+```
+
+You may have to use yarn to install the dependencies of the demo and remove "demo/node_modules/react-native-autoheight-webview/demo" manually, cause of installing a local package with npm will create symlink, but there is no supporting of React Native to symlink (https://github.com/facebook/watchman/issues/105) and "yarn install" ignores "files" from local dependencies (https://github.com/yarnpkg/yarn/issues/2822).
+For android, you may have to copy the "Users\UserName\.android\debug.keystore" to "demo/android/app/".
+
+## supporting rnahw
 
 One-time donation via PayPal:
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/iou90)
-
-## Support me
-
-
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/giannistolou)
