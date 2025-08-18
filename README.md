@@ -1,78 +1,126 @@
 # react-native-autoheight-webview
 
-An auto height webview for React Native, even auto width for inline html.
-## versioning
+An auto height webview for React Native, with support for auto width on inline HTML content.
 
-`npm install react-native-autoheight-webview --save`
+[![npm version](https://badge.fury.io/js/react-native-autoheight-webview.svg)](https://badge.fury.io/js/react-native-autoheight-webview)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Read [README Of the original author](.original_author/README.md) for earlier version guide and please note that fixes and new features will only be included in the last version.
+## 🚀 Features
 
-## showcase
+- **Auto Height**: Automatically adjusts webview height based on content
+- **Auto Width**: Supports auto width for inline HTML content  
+- **Cross Platform**: Works on both iOS and Android
+- **Customizable**: Support for custom CSS, JavaScript, and styling
+- **Performance Optimized**: Efficient size calculation and updates
 
-![react-native-autoheight-webview iOS](https://media.giphy.com/media/tocJYDUGCgwac0kkyB/giphy.gif)&nbsp;
-![react-native-autoheight-webview Android](https://media.giphy.com/media/9JyX1wZshYIxuPklHK/giphy.gif)
+## 📦 Installation
 
-## usage
+This package requires `react-native-webview` as a peer dependency.
 
-react-native-webview is a peer dependency and must be installed along this lib.
-```
-npm install react-native-autoheight-webview react-native-webview
-```
+`npm install react-native-autoheight-webview react-native-webview`
 
-```javascript
+
+## 📖 Usage
+
+```jsx
 import AutoHeightWebView from 'react-native-autoheight-webview'
-
 import { Dimensions } from 'react-native'
 
 <AutoHeightWebView
-    style={{ width: Dimensions.get('window').width - 15, marginTop: 35 }}
-    customScript={`document.body.style.background = 'lightyellow';`}
-    customStyle={`
-      * {
-        font-family: 'Times New Roman';
-      }
-      p {
-        font-size: 16px;
-      }
-    `}
-    onSizeUpdated={size => console.log(size.height)}
-    files={[{
-        href: 'cssfileaddress',
-        type: 'text/css',
-        rel: 'stylesheet'
-    }]}
-    source={{ html: `<p style="font-weight: 400;font-style: normal;font-size: 21px;line-height: 1.58;letter-spacing: -.003em;">Tags are great for describing the essence of your story in a single word or phrase, but stories are rarely about a single thing. <span style="background-color: transparent !important;background-image: linear-gradient(to bottom, rgba(146, 249, 190, 1), rgba(146, 249, 190, 1));">If I pen a story about moving across the country to start a new job in a car with my husband, two cats, a dog, and a tarantula, I wouldn’t only tag the piece with “moving”. I’d also use the tags “pets”, “marriage”, “career change”, and “travel tips”.</span></p>` }}
-    scalesPageToFit={true}
-    viewportContent={'width=device-width, user-scalable=no'}
-    /*
-    other react-native-webview props
-    */
-  />
+style={{
+width: Dimensions.get('window').width - 15,
+marginTop: 35
+}}
+customScript={document.body.style.background = 'lightyellow';}
+customStyle={ * { font-family: 'Times New Roman'; } p { font-size: 16px; } }
+onSizeUpdated={size => console.log(size.height)}
+files={[{
+href: 'cssfileaddress',
+type: 'text/css',
+rel: 'stylesheet'
+}]}
+source={{
+html: <p style="font-weight: 400;font-style: normal;font-size: 21px;line-height: 1.58;letter-spacing: -.003em;"> Tags are great for describing the essence of your story in a single word or phrase, but stories are rarely about a single thing. <span style="background-color: transparent !important;background-image: linear-gradient(to bottom, rgba(146, 249, 190, 1), rgba(146, 249, 190, 1));"> If I pen a story about moving across the country to start a new job in a car with my husband, two cats, a dog, and a tarantula, I wouldn't only tag the piece with "moving". I'd also use the tags "pets", "marriage", "career change", and "travel tips". </span> </p>
+}}
+scalesPageToFit={true}
+viewportContent={'width=device-width, user-scalable=no'}
+// Additional react-native-webview props supported
+/>
 ```
 
-## properties
 
-| Prop                         | Default |                                                      Type                                                       | Description                                                                                                                                                                                                  |
-| :--------------------------- | :-----: | :-------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| __style__                        |    -    |                                              `ViewPropTypes.style`                                              | The width of this component will be the width of screen by default, if there are some text selection issues on iOS, the width should be reduced more than 15 and the marginTop should be added more than 35. |
-| __customScript__                 |    -    |                                               `PropTypes.string`                                                | -                                                                                                                                                                                                            |
-| __customStyle__                  |    -    |                                               `PropTypes.string`                                                | The custom css content will be added to the page's `<head>`.                                                                                                                                                 |
-| __onSizeUpdated__                |    -    |                                                `PropTypes.func`                                                 | Either updated height or width will trigger onSizeUpdated.                                                                                                                                                   |
-| __files__                        |    -    | `PropTypes.arrayOf(PropTypes.shape({ href: PropTypes.string, type: PropTypes.string, rel: PropTypes.string }))` | Using local or remote files. To add local files: Add files to android/app/src/main/assets/ (depends on baseUrl) on android; add files to web/ (depends on baseUrl) on iOS.                                   |
-| __source__                       |    -    |                                               `PropTypes.object`                                                | BaseUrl now contained by source. 'web/' by default on iOS; 'file:///android_asset/' by default on Android or uri.                                                                                            |
-| __scalesPageToFit__              |  false  |                                                `PropTypes.bool`                                                 | False by default (different from react-native-webview which true by default on Android). When scalesPageToFit was enabled, it will apply the scale of the page directly.    |
-| __scrollEnabledWithZoomedin__                     |  false   |                                                `PropTypes.bool`                                                 | Making the webview scrollable on iOS when zoomed in even if scrollEnabled is false.                                                                        |
-| __viewportContent__                     |  'width=device-width' on iOS   |                                                `PropTypes.string`                                                 | Please note that 'width=device-width' with scalesPageToFit may cause some layout issues on Android, for these conditions, using __customScript__ prop to apply custom viewport meta.                                                                        |
-| __showsVerticalScrollIndicator__ |  false  |                                                `PropTypes.bool`                                                 | False by default (different from react-native-webview).                                                                                                                                                      |
-| __showsHorizontalScrollIndicator__ |  false  |                                                `PropTypes.bool`                                                 | False by default (different from react-native-webview).                                                                                                                                                      |
-| __originWhitelist__              |  ['*']  |                                      `PropTypes.arrayOf(PropTypes.string)`                                      |  Validate any origin by default cause of most cases using static HTML concerns.                                                                                                                                                                                                           |
-## supporting rnahw (Original Author)
+## 📱 Demo
 
-One-time donation via PayPal:
+| iOS | Android |
+|-----|---------|
+| ![iOS Demo](https://media.giphy.com/media/tocJYDUGCgwac0kkyB/giphy.gif) | ![Android Demo](https://media.giphy.com/media/9JyX1wZshYIxuPklHK/giphy.gif) |
+
+## ⚙️ API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| **style** | `ViewStyle` | - | Component styling. For iOS text selection issues, reduce width by 15+ and add marginTop 35+ |
+| **customScript** | `string` | - | Custom JavaScript code to inject into the webview |
+| **customStyle** | `string` | - | Custom CSS content added to the page's `<head>` |
+| **onSizeUpdated** | `function` | - | Callback triggered when height or width changes |
+| **files** | `FileObject[]` | - | Array of local or remote files to include |
+| **source** | `object` | - | WebView source object (HTML, URI, etc.) |
+| **scalesPageToFit** | `boolean` | `false` | Enable page scaling (differs from react-native-webview default) |
+| **scrollEnabledWithZoomedin** | `boolean` | `false` | Allow scrolling on iOS when zoomed in |
+| **viewportContent** | `string` | `'width=device-width'` (iOS) | Viewport meta tag content |
+| **showsVerticalScrollIndicator** | `boolean` | `false` | Show vertical scroll indicator |
+| **showsHorizontalScrollIndicator** | `boolean` | `false` | Show horizontal scroll indicator |
+| **originWhitelist** | `string[]` | `['*']` | Allowed origins for navigation |
+
+### FileObject
+
+
+```js
+interface FileObject {
+href: string; // File URL or path
+type: string; // MIME type (e.g., 'text/css')
+rel: string; // Relationship (e.g., 'stylesheet')
+}
+```
+
+
+## 📋 Requirements
+
+- React Native >= 0.60
+- react-native-webview >= 10.0.0
+
+## 📚 Documentation
+
+For earlier versions and migration guides, see the [original author's README](.original_author/README.md).
+
+> **Note**: Bug fixes and new features are only included in the latest version.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 💝 Support
+
+### Support the Original Author (rnahw)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/iou90)
 
-## Support me
-
+### Support This Fork
 
 [!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://buymeacoffee.com/giannistolou)
+
+## 🔗 Links
+
+- **Repository**: [https://github.com/giannistolou/react-native-autoheight-webview](https://github.com/giannistolou/react-native-autoheight-webview)
+- **npm Package**: [react-native-autoheight-webview](https://www.npmjs.com/package/react-native-autoheight-webview)
+- **Issues**: [Report bugs or request features](https://github.com/giannistolou/react-native-autoheight-webview/issues)
+
+---
+
+**Made with ❤️ by the React Native community**
