@@ -118,7 +118,7 @@ This project is licensed under the MIT License.
 ## 🔗 Links
 
 - **Repository**: [https://github.com/giannistolou/react-native-autoheight-webview](https://github.com/giannistolou/react-native-autoheight-webview)
-- **npm Package**: [react-native-autoheight-webview](https://www.npmjs.com/package/react-native-autoheight-webview)
+- **npm Package**: [@brown-bear/react-native-autoheight-webview](https://www.npmjs.com/package/@brown-bear/react-native-autoheight-webview)
 - **Issues**: [Report bugs or request features](https://github.com/giannistolou/react-native-autoheight-webview/issues)
 
 ---
