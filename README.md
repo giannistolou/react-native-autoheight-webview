@@ -51,9 +51,10 @@ viewportContent={'width=device-width, user-scalable=no'}
 
 ## 📱 Demo
 
-| iOS | Android |
-|-----|---------|
-| ![iOS Demo](https://media.giphy.com/media/tocJYDUGCgwac0kkyB/giphy.gif) | ![Android Demo](https://media.giphy.com/media/9JyX1wZshYIxuPklHK/giphy.gif) |
+![Demo](demo.gif) |
+
+You can also try the [demo project](https://github.com/giannistolou/react-native-autoheight-webview-demo) for a full example.
+
 
 ## ⚙️ API Reference
 
