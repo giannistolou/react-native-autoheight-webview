@@ -1,6 +1,6 @@
 {
   "name": "@brown-bear/react-native-autoheight-webview",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "An auto height webview for React Native, even auto width for inline html",
   "main": "autoHeightWebView",
   "types": "index.d.ts",
