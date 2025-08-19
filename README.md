@@ -1,6 +1,6 @@
 # react-native-autoheight-webview
 
-An auto height webview for React Native, with support for auto width on inline HTML content.
+An auto height webview for React Native, with support for auto width on inline HTML content. This is a fork of the original project [iou90](https://github.com/iou90/react-native-autoheight-webview).
 
 [![npm version](https://badge.fury.io/js/react-native-autoheight-webview.svg)](https://badge.fury.io/js/react-native-autoheight-webview)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -89,8 +89,8 @@ rel: string; // Relationship (e.g., 'stylesheet')
 
 ## 📋 Requirements
 
-- React Native >= 0.60
-- react-native-webview >= 10.0.0
+- React Native >= 0.78
+- react-native-webview >= 13.13.2
 
 ## 📚 Documentation
 
@@ -108,7 +108,7 @@ This project is licensed under the MIT License.
 
 ## 💝 Support
 
-### Support the Original Author (rnahw)
+### Support the Original Author (iou90)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/iou90)
 
