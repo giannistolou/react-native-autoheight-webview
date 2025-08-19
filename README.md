@@ -17,13 +17,13 @@ An auto height webview for React Native, with support for auto width on inline H
 
 This package requires `react-native-webview` as a peer dependency.
 
-`npm install react-native-autoheight-webview react-native-webview`
+`npm install @brown-bear/react-native-autoheight-webview react-native-webview`
 
 
 ## 📖 Usage
 
 ```jsx
-import AutoHeightWebView from 'react-native-autoheight-webview'
+import AutoHeightWebView from '@brown-bear/react-native-autoheight-webview'
 import { Dimensions } from 'react-native'
 
 <AutoHeightWebView
