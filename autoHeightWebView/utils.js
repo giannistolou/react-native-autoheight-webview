@@ -12,19 +12,20 @@ const CONFIG = {
   MAX_SAME_HEIGHT_CHECKS: 5,
 };
 
-const escapeCss = (css) => {
-  if (!css) return '';
-  return css.replace(/['"`]/g, '\\$&').replace(/\n/g, '\\n');
-};
+const escapeCss = (css) =>
+  css?.replace(/['"`]/g, '\\$&').replace(/\n/g, '\\n') || '';
 
 const domMutationObserveScript = `
   var MutationObserver =
     window.MutationObserver || window.WebKitMutationObserver;
   var observer = new MutationObserver(updateSize);
-  observer.observe(document, {
+  observer.observe(wrapper, {
+    childList: true,
     subtree: true,
-    attributes: true
+    attributes: true,
+    attributeFilter: ['style', 'class']
   });
+
 `;
 
 const updateSizeWithMessage = (element, scalesPageToFit) =>
@@ -51,11 +52,11 @@ const updateSizeWithMessage = (element, scalesPageToFit) =>
 
     clearTimeout(checkPostMessageTimeout);
     var result = ${element}.getBoundingClientRect()
-    height = result.height + result.top;
+    var height = result.height + result.top;
     if(!height) {
       height = ${element}.offsetHeight || document.documentElement.offsetHeight
     }
-    width = result.width;
+    var width = result.width;
     if(!width) {
       width = ${element}.offsetWidth || document.documentElement.offsetWidth
     }
@@ -98,7 +99,8 @@ const setViewportContent = (content) => {
 const detectZoomChanged = `
   var latestTapStamp = 0;
   var lastScale = 1.0;
-
+  var zoomedinTimeOut;
+  
   function detectZoomChanged() {
     var tempZoomedin = (screen.width / window.innerWidth) > usingScale;
     tempZoomedin !== zoomedin && window.ReactNativeWebView.postMessage(JSON.stringify({ zoomedin: tempZoomedin, topic: ${TOPIC_STRING} }));
@@ -193,7 +195,7 @@ const appendStylesToHead = ({style, script}) => {
 const getInjectedSource = ({html, script}) => `
   ${html}
   <script>
-  // prevents code colissions with global scope
+  // prevents code collisions with global scope
   (function() {
     ${script}
   })();
@@ -219,10 +221,6 @@ const getScript = ({
   script = appendStylesToHead({style: customStyle, script});
   customScript && (script = customScript + script);
   return script;
-};
-
-export const getWidth = (style) => {
-  return style && style.width ? style.width : screenWidth;
 };
 
 export const isSizeChanged = ({
