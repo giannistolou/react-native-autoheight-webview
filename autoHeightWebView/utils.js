@@ -2,8 +2,20 @@
 
 import {Dimensions} from 'react-native';
 
-export const topic = 'rnaw';
-export const topicString = `"${topic}"`;
+export const TOPIC = 'rnaw';
+export const TOPIC_STRING = `"${TOPIC}"`;
+
+const CONFIG = {
+  FORCE_REFRESH_DELAY: 1000,
+  DOUBLE_TAP_DELAY: 400,
+  CHECK_POST_MESSAGE_DELAY: 200,
+  MAX_SAME_HEIGHT_CHECKS: 5,
+};
+
+const escapeCss = (css) => {
+  if (!css) return '';
+  return css.replace(/['"`]/g, '\\$&').replace(/\n/g, '\\n');
+};
 
 const domMutationObserveScript = `
   var MutationObserver =
@@ -22,8 +34,6 @@ const updateSizeWithMessage = (element, scalesPageToFit) =>
   var zoomedin = false;
   var lastHeight = 0;
   var heightTheSameTimes = 0;
-  var maxHeightTheSameTimes = 5;
-  var forceRefreshDelay = 1000;
   var forceRefreshTimeout;
   var checkPostMessageTimeout;
 
@@ -35,7 +45,7 @@ const updateSizeWithMessage = (element, scalesPageToFit) =>
       !window.hasOwnProperty('ReactNativeWebView') || 
       !window.ReactNativeWebView.hasOwnProperty('postMessage')
     ) {
-      checkPostMessageTimeout = setTimeout(updateSize, 200);
+      checkPostMessageTimeout = setTimeout(updateSize, ${CONFIG.CHECK_POST_MESSAGE_DELAY});
       return;
     }
 
@@ -51,7 +61,7 @@ const updateSizeWithMessage = (element, scalesPageToFit) =>
     }
 
 
-    window.ReactNativeWebView.postMessage(JSON.stringify({ width: Math.min(width, screen.width), height: height * usingScale, topic: ${topicString} }));
+    window.ReactNativeWebView.postMessage(JSON.stringify({ width: Math.min(width, screen.width), height: height * usingScale, topic: ${TOPIC_STRING} }));
 
     // Make additional height checks (required to fix issues wit twitter embeds)
     clearTimeout(forceRefreshTimeout);
@@ -64,10 +74,10 @@ const updateSizeWithMessage = (element, scalesPageToFit) =>
 
     lastHeight = height;
 
-    if (heightTheSameTimes <= maxHeightTheSameTimes) {
+    if (heightTheSameTimes <= ${CONFIG.MAX_SAME_HEIGHT_CHECKS}) {
       forceRefreshTimeout = setTimeout(
         updateSize,
-        heightTheSameTimes * forceRefreshDelay
+        heightTheSameTimes * ${CONFIG.FORCE_REFRESH_DELAY}
       );
     }
   }
@@ -88,20 +98,20 @@ const setViewportContent = (content) => {
 const detectZoomChanged = `
   var latestTapStamp = 0;
   var lastScale = 1.0;
-  var doubleTapDelay = 400;
+
   function detectZoomChanged() {
     var tempZoomedin = (screen.width / window.innerWidth) > usingScale;
-    tempZoomedin !== zoomedin && window.ReactNativeWebView.postMessage(JSON.stringify({ zoomedin: tempZoomedin, topic: ${topicString} }));
+    tempZoomedin !== zoomedin && window.ReactNativeWebView.postMessage(JSON.stringify({ zoomedin: tempZoomedin, topic: ${TOPIC_STRING} }));
     zoomedin = tempZoomedin;
   }
-  window.addEventListener('ontouchstart', event => {
+  window.addEventListener('touchstart', event => {
     if (event.touches.length === 2) {
       scaling = true;
     }
   })
   window.addEventListener('touchend', event => {
     if(scaling) {
-      scaleing = false;
+      scaling = false;
     }
 
     var tempScale = event.scale; 
@@ -114,7 +124,7 @@ const detectZoomChanged = `
       zoomedinTimeOut = setTimeout(() => {
         clearTimeout(zoomedinTimeOut);
         detectZoomChanged();
-      }, doubleTapDelay);
+      }, ${CONFIG.DOUBLE_TAP_DELAY});
     }
 
     latestTapStamp = new Date().getTime();
@@ -171,7 +181,7 @@ const bodyStyle = `
 const appendStylesToHead = ({style, script}) => {
   const currentStyles = style ? bodyStyle + style : bodyStyle;
   // Escape any single quotes or newlines in the CSS with .replace()
-  const escaped = currentStyles.replace(/\'/g, "\\'").replace(/\n/g, '\\n');
+  const escaped = escapeCss(currentStyles);
   return `
     var styleElement = document.createElement('style');
     styleElement.innerHTML = '${escaped}';
