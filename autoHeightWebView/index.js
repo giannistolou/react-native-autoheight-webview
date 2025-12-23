@@ -3,7 +3,7 @@ import {StyleSheet, Platform, ViewPropTypes} from 'react-native';
 import PropTypes from 'prop-types';
 import {WebView} from 'react-native-webview';
 import {
-  topic,
+  TOPIC,
   reduceData,
   getWidth,
   isSizeChanged,
@@ -56,7 +56,7 @@ const AutoHeightWebView = React.memo(
         if (event.nativeEvent) {
           try {
             const data = JSON.parse(event.nativeEvent.data);
-            if (data.topic !== topic) {
+            if (data.topic !== TOPIC) {
               onMessage && onMessage(event);
               return;
             }

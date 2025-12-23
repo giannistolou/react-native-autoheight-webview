@@ -29,6 +29,4 @@ export interface AutoHeightWebViewProps extends WebViewProps {
   scrollEnabledWithZoomedin?: boolean;
 }
 
-export default class AutoHeightWebView extends WebView<
-  AutoHeightWebViewProps
-> {}
+export default class AutoHeightWebView extends WebView<AutoHeightWebViewProps> {}
