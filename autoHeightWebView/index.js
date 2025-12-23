@@ -12,102 +12,107 @@ import {
 } from './utils';
 
 const AutoHeightWebView = React.memo(
-  forwardRef(({
-    showsVerticalScrollIndicator = false,
-    showsHorizontalScrollIndicator = false,
-    originWhitelist = ['*'],
-    scalesPageToFit,
-    viewportContent,
-    ...props
-  }, ref) => {
-    const platformDefaults = {};
-    if (Platform.OS === 'android') {
-      platformDefaults.scalesPageToFit = false;
-    }
-    if (Platform.OS === 'ios') {
-      platformDefaults.viewportContent = 'width=device-width';
-    }
+  forwardRef(
+    (
+      {
+        showsVerticalScrollIndicator = false,
+        showsHorizontalScrollIndicator = false,
+        originWhitelist = ['*'],
+        scalesPageToFit,
+        viewportContent,
+        ...props
+      },
+      ref,
+    ) => {
+      const platformDefaults = {};
+      if (Platform.OS === 'android') {
+        platformDefaults.scalesPageToFit = false;
+      }
+      if (Platform.OS === 'ios') {
+        platformDefaults.viewportContent = 'width=device-width';
+      }
 
-    const fixProps = {
-      showsVerticalScrollIndicator,
-      showsHorizontalScrollIndicator,
-      originWhitelist,
-      ...platformDefaults,
-      ...props,
-    };
+      const fixProps = {
+        showsVerticalScrollIndicator,
+        showsHorizontalScrollIndicator,
+        originWhitelist,
+        ...platformDefaults,
+        ...props,
+      };
 
-    const {
-      style,
-      onMessage,
-      onSizeUpdated,
-      scrollEnabledWithZoomedin,
-      scrollEnabled,
-    } = fixProps;
+      const {
+        style,
+        onMessage,
+        onSizeUpdated,
+        scrollEnabledWithZoomedin,
+        scrollEnabled,
+      } = fixProps;
 
-    const [size, setSize] = useState({
-      height: style && style.height ? style.height : 0,
-      width: getWidth(style),
-    });
+      const [size, setSize] = useState({
+        height: style && style.height ? style.height : 0,
+        width: getWidth(style),
+      });
 
-    const [scrollable, setScrollable] = useState(false);
-    const handleMessage = (event) => {
-      if (event.nativeEvent) {
-        try {
-          const data = JSON.parse(event.nativeEvent.data);
-          if (data.topic !== topic) {
+      const [scrollable, setScrollable] = useState(false);
+      const handleMessage = (event) => {
+        if (event.nativeEvent) {
+          try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (data.topic !== topic) {
+              onMessage && onMessage(event);
+              return;
+            }
+            const {height, width, zoomedin} = data;
+            !scrollEnabled &&
+              scrollEnabledWithZoomedin &&
+              setScrollable(!!zoomedin);
+            const {height: previousHeight, width: previousWidth} = size;
+            isSizeChanged({height, previousHeight, width, previousWidth}) &&
+              setSize({
+                height,
+                width,
+              });
+          } catch (error) {
             onMessage && onMessage(event);
-            return;
           }
-          const {height, width, zoomedin} = data;
-          !scrollEnabled &&
-            scrollEnabledWithZoomedin &&
-            setScrollable(!!zoomedin);
-          const {height: previousHeight, width: previousWidth} = size;
-          isSizeChanged({height, previousHeight, width, previousWidth}) &&
-            setSize({
-              height,
-              width,
-            });
-        } catch (error) {
+        } else {
           onMessage && onMessage(event);
         }
-      } else {
-        onMessage && onMessage(event);
-      }
-    };
+      };
 
-    const currentScrollEnabled =
-      scrollEnabled === false && scrollEnabledWithZoomedin
-        ? scrollable
-        : scrollEnabled;
+      const currentScrollEnabled =
+        scrollEnabled === false && scrollEnabledWithZoomedin
+          ? scrollable
+          : scrollEnabled;
 
-    const {currentSource, script} = reduceData(fixProps);
-    const {width, height} = size;
-    useEffect(() => {
-      onSizeUpdated &&
-        onSizeUpdated({
-          height,
-          width,
-        });
-    }, [width, height, onSizeUpdated]);
+      const {currentSource, script} = reduceData(fixProps);
+      const {width, height} = size;
+      useEffect(() => {
+        onSizeUpdated &&
+          onSizeUpdated({
+            height,
+            width,
+          });
+      }, [width, height, onSizeUpdated]);
 
-    return React.createElement(WebView, {
-      ...fixProps,
-      ref,
-      onMessage: handleMessage,
-      style: [
-        styles.webView,
-        {
-          width,
-          height,
-        },
-        style,
-      ],
-      injectedJavaScript: script,
-      source: currentSource,
-      scrollEnabled: currentScrollEnabled,
-    });
-  }),
+      return React.createElement(WebView, {
+        ...fixProps,
+        ref,
+        onMessage: handleMessage,
+        style: [
+          styles.webView,
+          {
+            width,
+            height,
+          },
+          style,
+        ],
+        injectedJavaScript: script,
+        source: currentSource,
+        scrollEnabled: currentScrollEnabled,
+      });
+    },
+  ),
   (prevProps, nextProps) => !shouldUpdate({prevProps, nextProps}),
 );
 

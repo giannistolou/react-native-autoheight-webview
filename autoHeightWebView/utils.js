@@ -2,8 +2,8 @@
 
 import {Dimensions} from 'react-native';
 
-export const topic = "rnaw"
-export const topicString = `"${topic}"`
+export const topic = 'rnaw';
+export const topicString = `"${topic}"`;
 
 const domMutationObserveScript = `
   var MutationObserver =
