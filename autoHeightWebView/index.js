@@ -23,13 +23,12 @@ const AutoHeightWebView = React.memo(
       },
       ref,
     ) => {
-      const platformDefaults = {};
-      if (Platform.OS === 'android') {
-        platformDefaults.scalesPageToFit = false;
-      }
-      if (Platform.OS === 'ios') {
-        platformDefaults.viewportContent = 'width=device-width';
-      }
+      // Platform.select: https://reactnative.dev/docs/platform-specific-code#platform-module
+      const platformDefaults = Platform.select({
+        android: {scalesPageToFit: false},
+        ios: {viewportContent: 'width=device-width'},
+        default: {},
+      });
 
       const fixProps = {
         showsVerticalScrollIndicator,
