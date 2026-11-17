@@ -1,16 +1,18 @@
 {
   "name": "@brown-bear/react-native-autoheight-webview",
-  "version": "2.0.4",
+  "version": "3.0.0",
   "description": "An auto height webview for React Native, even auto width for inline html",
-  "main": "autoHeightWebView",
-  "types": "index.d.ts",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "files": [
-    "index.js",
-    "index.d.ts",
-    "autoHeightWebView"
+    "src",
+    "lib"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "prepare": "yarn build"
   },
   "repository": {
     "type": "git",
@@ -30,23 +32,18 @@
   },
   "homepage": "https://github.com/giannistolou/react-native-autoheight-webview#readme",
   "peerDependencies": {
-    "react": "*",
-    "react-native": "*",
-    "react-native-webview": ">= 13.13.2"
-  },
-  "dependencies": {
-    "deprecated-react-native-prop-types": "^2.3.0",
-    "prop-types": "^15.7.2"
+    "react": ">=19.0.0",
+    "react-native": ">=0.78.0",
+    "react-native-webview": ">=13.13.2"
   },
   "devDependencies": {
-    "@react-native-community/eslint-config": "^2.0.0",
-    "@typescript-eslint/parser": "^4.15.1",
-    "babel-eslint": "^10.1.0",
-    "eslint": "^7.20.0",
-    "eslint-plugin-jsx": "^0.1.0",
-    "eslint-plugin-react": "^7.22.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
-    "eslint-plugin-react-native": "^3.10.0",
-    "typescript": "^4.1.5"
+    "@react-native/eslint-config": "^0.88.0",
+    "@types/react": "^19.3.0",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.10",
+    "react": "^19.3.1",
+    "react-native": "^0.88.0",
+    "react-native-webview": "^14.0.1",
+    "typescript": "~6.0.3"
   }
 }
