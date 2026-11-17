@@ -7,46 +7,135 @@ An auto height webview for React Native, with support for auto width on inline H
 ## 🚀 Features
 
 - **Auto Height**: Automatically adjusts webview height based on content
-- **Auto Width**: Supports auto width for inline HTML content  
+- **Auto Width**: Supports auto width for inline HTML content
 - **Cross Platform**: Works on both iOS and Android
 - **Customizable**: Support for custom CSS, JavaScript, and styling
 - **Performance Optimized**: Efficient size calculation and updates
 
 ## 📦 Installation
 
-This package requires `react-native-webview` as a peer dependency.
+`react-native-webview` is a peer dependency, so install it next to this package:
 
-`npm install @brown-bear/react-native-autoheight-webview react-native-webview`
+```sh
+yarn add @brown-bear/react-native-autoheight-webview react-native-webview
+# or
+npm install @brown-bear/react-native-autoheight-webview react-native-webview
+```
 
+On iOS, link the native WebView module afterwards:
+
+```sh
+cd ios && pod install
+```
 
 ## 📖 Usage
 
-```jsx
-import AutoHeightWebView from '@brown-bear/react-native-autoheight-webview'
-import { Dimensions } from 'react-native'
+The component is the package's default export. Use it like a normal `WebView`, but leave out the height: it sizes itself to fit the content.
 
-<AutoHeightWebView
-style={{
-width: Dimensions.get('window').width - 15,
-marginTop: 35
-}}
-customScript={document.body.style.background = 'lightyellow';}
-customStyle={ * { font-family: 'Times New Roman'; } p { font-size: 16px; } }
-onSizeUpdated={size => console.log(size.height)}
-files={[{
-href: 'cssfileaddress',
-type: 'text/css',
-rel: 'stylesheet'
-}]}
-source={{
-html: <p style="font-weight: 400;font-style: normal;font-size: 21px;line-height: 1.58;letter-spacing: -.003em;"> Tags are great for describing the essence of your story in a single word or phrase, but stories are rarely about a single thing. <span style="background-color: transparent !important;background-image: linear-gradient(to bottom, rgba(146, 249, 190, 1), rgba(146, 249, 190, 1));"> If I pen a story about moving across the country to start a new job in a car with my husband, two cats, a dog, and a tarantula, I wouldn't only tag the piece with "moving". I'd also use the tags "pets", "marriage", "career change", and "travel tips". </span> </p>
-}}
-scalesPageToFit={true}
-viewportContent={'width=device-width, user-scalable=no'}
-// Additional react-native-webview props supported
-/>
+```tsx
+import React from 'react';
+import {Dimensions} from 'react-native';
+import AutoHeightWebView from '@brown-bear/react-native-autoheight-webview';
+
+export function ArticleBody() {
+  return (
+    <AutoHeightWebView
+      style={{width: Dimensions.get('window').width - 15, marginTop: 35}}
+      customScript={`document.body.style.background = 'lightyellow';`}
+      customStyle={`
+        * { font-family: 'Times New Roman'; }
+        p { font-size: 16px; }
+      `}
+      onSizeUpdated={(size) => console.log(size.height)}
+      files={[
+        {
+          href: 'https://example.com/article.css',
+          type: 'text/css',
+          rel: 'stylesheet',
+        },
+      ]}
+      source={{
+        html: '<p>Tags are great for describing the essence of your story.</p>',
+      }}
+      scalesPageToFit={true}
+      viewportContent={'width=device-width, user-scalable=no'}
+    />
+  );
+}
 ```
 
+All other [`react-native-webview` props](https://github.com/react-native-webview/react-native-webview/blob/master/docs/Reference.md) are passed through to the underlying `WebView`.
+
+### TypeScript
+
+The package ships its own type definitions, so you don't need an `@types/...` package:
+
+```tsx
+import React, {useRef} from 'react';
+import type {WebView} from 'react-native-webview';
+import AutoHeightWebView, {
+  type AutoHeightWebViewProps,
+  type SizeUpdate,
+  type StylesFile,
+} from '@brown-bear/react-native-autoheight-webview';
+
+const stylesheets: StylesFile[] = [
+  {
+    href: 'https://example.com/article.css',
+    type: 'text/css',
+    rel: 'stylesheet',
+  },
+];
+
+export function Article({html}: {html: string}) {
+  const webViewRef = useRef<WebView>(null);
+  const logHeight = ({height}: SizeUpdate) => console.log(height);
+
+  return (
+    <AutoHeightWebView
+      ref={webViewRef}
+      source={{html}}
+      files={stylesheets}
+      onSizeUpdated={logHeight}
+    />
+  );
+}
+```
+
+The `ref` gives you the underlying `WebView`, so methods like `webViewRef.current?.reload()` and `injectJavaScript(...)` work as usual.
+
+#### Type errors from `react-native-webview` on React Native 0.87+
+
+React Native 0.87 made its strict TypeScript API the default. `react-native-webview` (up to at least 14.0.1) still uses types that API removed. With `skipLibCheck` turned off, your app then reports errors inside `node_modules/react-native-webview` such as:
+
+```
+Module '"react-native"' has no exported member 'NativeMethodsMixin'.
+Module '"react-native"' has no exported member 'UIManagerStatic'.
+Cannot find module 'react-native/Libraries/Types/CodegenTypes'
+```
+
+These come from `react-native-webview` itself, not from this package. Pick either fix in your app's `tsconfig.json`:
+
+```jsonc
+{
+  "compilerOptions": {
+    // Option 1: the React Native template default
+    "skipLibCheck": true,
+
+    // Option 2: keep library checks and opt in to React Native's legacy types
+    "customConditions": ["react-native-legacy-deep-imports"],
+  },
+}
+```
+
+`customConditions` needs `"moduleResolution": "bundler"` (the React Native template default) or `"node16"`.
+
+### Migrating from 2.x
+
+- **Peer versions:** React 19+, React Native 0.78+ and `react-native-webview` 13.13.2+ are now required.
+- **No runtime PropTypes:** props are checked by the TypeScript types instead.
+- **Ref type:** type refs as `useRef<WebView>` (from `react-native-webview`), not `useRef<AutoHeightWebView>`.
+- **Your values now apply:** `scalesPageToFit` and `viewportContent` were previously ignored in favor of the platform defaults.
 
 ## 📱 Demo
 
@@ -54,46 +143,47 @@ viewportContent={'width=device-width, user-scalable=no'}
 
 You can also try the [demo project](https://github.com/giannistolou/react-native-autoheight-webview-demo) for a full example.
 
-
 ## ⚙️ API Reference
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| **style** | `ViewStyle` | - | Component styling. For iOS text selection issues, reduce width by 15+ and add marginTop 35+ |
-| **customScript** | `string` | - | Custom JavaScript code to inject into the webview |
-| **customStyle** | `string` | - | Custom CSS content added to the page's `<head>` |
-| **onSizeUpdated** | `function` | - | Callback triggered when height or width changes |
-| **files** | `FileObject[]` | - | Array of local or remote files to include |
-| **source** | `object` | - | WebView source object (HTML, URI, etc.) |
-| **scalesPageToFit** | `boolean` | `false` | Enable page scaling (differs from react-native-webview default) |
-| **scrollEnabledWithZoomedin** | `boolean` | `false` | Allow scrolling on iOS when zoomed in |
-| **viewportContent** | `string` | `'width=device-width'` (iOS) | Viewport meta tag content |
-| **showsVerticalScrollIndicator** | `boolean` | `false` | Show vertical scroll indicator |
-| **showsHorizontalScrollIndicator** | `boolean` | `false` | Show horizontal scroll indicator |
-| **originWhitelist** | `string[]` | `['*']` | Allowed origins for navigation |
+| Prop                               | Type                         | Default                      | Description                                                                                 |
+| ---------------------------------- | ---------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------- |
+| **style**                          | `ViewStyle`                  | -                            | Component styling. For iOS text selection issues, reduce width by 15+ and add marginTop 35+ |
+| **customScript**                   | `string`                     | -                            | Custom JavaScript code to inject into the webview                                           |
+| **customStyle**                    | `string`                     | -                            | Custom CSS content added to the page's `<head>`                                             |
+| **onSizeUpdated**                  | `(size: SizeUpdate) => void` | -                            | Callback triggered when height or width changes                                             |
+| **files**                          | `StylesFile[]`               | -                            | Array of local or remote files to include                                                   |
+| **source**                         | `object`                     | -                            | WebView source object (HTML, URI, etc.)                                                     |
+| **scalesPageToFit**                | `boolean`                    | `false` (Android)            | Enable page scaling (differs from react-native-webview default)                             |
+| **scrollEnabledWithZoomedin**      | `boolean`                    | `false`                      | Allow scrolling on iOS when zoomed in                                                       |
+| **viewportContent**                | `string`                     | `'width=device-width'` (iOS) | Viewport meta tag content                                                                   |
+| **showsVerticalScrollIndicator**   | `boolean`                    | `false`                      | Show vertical scroll indicator                                                              |
+| **showsHorizontalScrollIndicator** | `boolean`                    | `false`                      | Show horizontal scroll indicator                                                            |
+| **originWhitelist**                | `string[]`                   | `['*']`                      | Allowed origins for navigation                                                              |
 
-### FileObject
+### StylesFile
 
+Exported as `StylesFile`:
 
-```js
-interface FileObject {
-href: string; // File URL or path
-type: string; // MIME type (e.g., 'text/css')
-rel: string; // Relationship (e.g., 'stylesheet')
+```ts
+interface StylesFile {
+  href: string; // File URL or path
+  type: string; // MIME type (e.g., 'text/css')
+  rel: string; // Relationship (e.g., 'stylesheet')
 }
 ```
 
-
 ## 📋 Requirements
 
+- React >= 19
 - React Native >= 0.78
 - react-native-webview >= 13.13.2
 
 ## 📚 Documentation
 
-For earlier versions and migration guides, see the [original author's README](.original_author/README.md).
+- [How the library works](doc/README.md): architecture and flow diagrams.
+- For earlier versions, see the [original author's README](original_author/README.md).
 
 > **Note**: Bug fixes and new features are only included in the latest version.
 
